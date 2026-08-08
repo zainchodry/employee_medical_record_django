@@ -40,7 +40,9 @@ DJANGO_APPS = [
 ]
 
 PROJECT_APPS = [
-    'accounts'
+    'accounts',
+    'medical_records',
+    
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS
@@ -135,3 +137,20 @@ MEDIA_FILES_DIRS = [
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# settings.py
+
+AUTH_USER_MODEL = 'accounts.User'
+
+# Authentication redirect links
+LOGIN_REDIRECT_URL = 'profile'
+LOGOUT_REDIRECT_URL = 'login'
+LOGIN_URL = 'login'
+
+# Real Email Configuration (Replace with your SMTP details, e.g., Gmail or SendGrid)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your_email@gmail.com'  
+EMAIL_HOST_PASSWORD = 'your_app_password' # Use an App Password, not your actual account password
