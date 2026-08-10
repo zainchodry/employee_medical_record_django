@@ -13,7 +13,7 @@ class MedicalRecordListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user = self.request.user
-        if user.role == User.Roles.EMPLOYEE:
+        if user.role == User.Role.EMPLOYEE:
             return MedicalRecord.objects.filter(employee=user)
         # Doctors and Admins see all records
         return MedicalRecord.objects.select_related('employee', 'doctor').all()
@@ -25,7 +25,7 @@ class MedicalRecordDetailView(LoginRequiredMixin, DetailView):
 
     def get_queryset(self):
         user = self.request.user
-        if user.role == User.Roles.EMPLOYEE:
+        if user.role == User.Role.EMPLOYEE:
             return MedicalRecord.objects.filter(employee=user)
         return MedicalRecord.objects.all()
 

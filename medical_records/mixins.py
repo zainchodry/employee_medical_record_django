@@ -7,7 +7,7 @@ class DoctorOrAdminRequiredMixin(AccessMixin):
         if not request.user.is_authenticated:
             return self.handle_no_permission()
             
-        allowed_roles = [User.Roles.DOCTOR, User.Roles.ADMIN, User.Roles.HR]
+        allowed_roles = [User.Role.DOCTOR, User.Role.ADMIN, User.Role.HR]
         if request.user.role not in allowed_roles:
             return self.handle_no_permission()
             

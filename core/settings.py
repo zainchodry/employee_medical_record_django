@@ -42,7 +42,9 @@ DJANGO_APPS = [
 PROJECT_APPS = [
     'accounts',
     'medical_records',
-    
+    'appointments',
+    'notifications',
+    'pharmacy'
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS
@@ -143,7 +145,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = 'accounts.User'
 
 # Authentication redirect links
-LOGIN_REDIRECT_URL = 'profile'
+LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
 

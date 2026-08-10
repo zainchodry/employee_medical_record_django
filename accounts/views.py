@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import CustomUserCreationForm, UserUpdateForm, ProfileUpdateForm
+from medical_records.models import MedicalRecord
+from appointments.models import Appointment
+from notifications.models import UserAlert
 
 def register(request):
     if request.method == 'POST':
@@ -13,6 +16,19 @@ def register(request):
     else:
         form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
+
+@login_required
+def dashboard(request):
+    user = request.user
+    context = {
+        'total_records': MedicalRecord.objects.filter(employee=user).count() if user.role == 'EMPLOYEE' else MedicalRecord.objects.count(),
+        'total_appointments': Appointment.objects.filter(patient=user).count() if user.role == 'EMPLOYEE' else Appointment.objects.count(),
+        'pending_appointments': Appointment.objects.filter(status='PENDING').count() if user.role != 'EMPLOYEE' else Appointment.objects.filter(patient=user, status='PENDING').count(),
+        'unread_alerts': UserAlert.objects.filter(user=user, is_read=False).count(),
+        'recent_records': (MedicalRecord.objects.filter(employee=user) if user.role == 'EMPLOYEE' else MedicalRecord.objects.all()).select_related('employee', 'doctor')[:5],
+        'recent_appointments': (Appointment.objects.filter(patient=user) if user.role == 'EMPLOYEE' else Appointment.objects.all()).select_related('patient', 'doctor')[:5],
+    }
+    return render(request, 'accounts/dashboard.html', context)
 
 @login_required
 def profile_view(request):

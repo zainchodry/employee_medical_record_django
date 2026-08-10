@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Stats Grid -->
+<div class="stats-grid">
+  <div class="stat-card fade-in">
+    <div class="stat-icon teal"><i class="fas fa-file-medical"></i></div>
+    <div class="stat-info">
+      <h3>{{ total_records }}</h3>
+      <p>Medical Records</p>
+    </div>
+  </div>
+  <div class="stat-card fade-in fade-in-delay-1">
+    <div class="stat-icon purple"><i class="fas fa-calendar-check"></i></div>
+    <div class="stat-info">
+      <h3>{{ total_appointments }}</h3>
+      <p>Total Appointments</p>
+    </div>
+  </div>
+  <div class="stat-card fade-in fade-in-delay-2">
+    <div class="stat-icon yellow"><i class="fas fa-clock"></i></div>
+    <div class="stat-info">
+      <h3>{{ pending_appointments }}</h3>
+      <p>Pending Approval</p>
+    </div>
+  </div>
+  <div class="stat-card fade-in fade-in-delay-3">
+    <div class="stat-icon red"><i class="fas fa-bell"></i></div>
+    <div class="stat-info">
+      <h3>{{ unread_alerts }}</h3>
+      <p>Unread Alerts</p>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Records -->
+<div class="card mb-3">
+  <div class="card-header">
+    <h2><i class="fas fa-file-medical" style="color:var(--accent);margin-right:8px;"></i> Recent Medical Records</h2>
+    <a href="{% url 'record_list' %}" class="btn btn-secondary btn-sm">View All</a>
+  </div>
+  <div class="card-body">
+    {% if recent_records %}
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Employee</th>
+            <th>Diagnosis</th>
+            <th>Doctor</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in recent_records %}
+          <tr>
+            <td>{{ record.employee.get_full_name|default:record.employee.email }}</td>
+            <td>{{ record.diagnosis }}</td>
+            <td>{{ record.doctor.get_full_name|default:"—" }}</td>
+            <td>
+              <span class="badge {% if record.status == 'ACTIVE' %}badge-active{% elif record.status == 'RESOLVED' %}badge-resolved{% else %}badge-observation{% endif %}">
+                {{ record.get_status_display }}
+              </span>
+            </td>
+            <td>{{ record.record_date }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon"><i class="fas fa-folder-open"></i></div>
+      <p>No medical records found.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Recent Appointments -->
+<div class="card">
+  <div class="card-header">
+    <h2><i class="fas fa-calendar-check" style="color:var(--accent-secondary);margin-right:8px;"></i> Recent Appointments</h2>
+    <a href="{% url 'appointment_list' %}" class="btn btn-secondary btn-sm">View All</a>
+  </div>
+  <div class="card-body">
+    {% if recent_appointments %}
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for apt in recent_appointments %}
+          <tr>
+            <td>{{ apt.patient.get_full_name|default:apt.patient.email }}</td>
+            <td>{{ apt.doctor.get_full_name|default:"Unassigned" }}</td>
+            <td>{{ apt.date }}</td>
+            <td>{{ apt.time }}</td>
+            <td>
+              <span class="badge {% if apt.status == 'APPROVED' %}badge-approved{% elif apt.status == 'PENDING' %}badge-pending{% elif apt.status == 'COMPLETED' %}badge-completed{% else %}badge-cancelled{% endif %}">
+                {{ apt.get_status_display }}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon"><i class="fas fa-calendar-times"></i></div>
+      <p>No appointments found.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

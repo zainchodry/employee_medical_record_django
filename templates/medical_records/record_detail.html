@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block title %}Record Detail{% endblock %}
+{% block page_title %}Medical Record Detail{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1><i class="fas fa-file-medical-alt" style="color:var(--accent);margin-right:8px;"></i> Record #{{ record.pk }}</h1>
+  <div class="d-flex gap-2">
+    {% if request.user.role == 'DOCTOR' or request.user.role == 'ADMIN' %}
+    <a href="{% url 'record_update' record.pk %}" class="btn btn-secondary btn-sm"><i class="fas fa-edit"></i> Edit</a>
+    <a href="{% url 'dispense_medicine' record.pk %}" class="btn btn-primary btn-sm"><i class="fas fa-pills"></i> Dispense Medicine</a>
+    {% endif %}
+    <a href="{% url 'record_list' %}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Back</a>
+  </div>
+</div>
+
+<div class="detail-grid">
+  <!-- Patient & Doctor Info -->
+  <div class="card">
+    <div class="detail-section">
+      <h3><i class="fas fa-user"></i> Patient Information</h3>
+      <div class="detail-row">
+        <span class="detail-label">Employee</span>
+        <span class="detail-value">{{ record.employee.get_full_name|default:record.employee.email }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Doctor</span>
+        <span class="detail-value">{{ record.doctor.get_full_name|default:"Not assigned" }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Status</span>
+        <span class="detail-value">
+          <span class="badge {% if record.status == 'ACTIVE' %}badge-active{% elif record.status == 'RESOLVED' %}badge-resolved{% else %}badge-observation{% endif %}">
+            {{ record.get_status_display }}
+          </span>
+        </span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Record Date</span>
+        <span class="detail-value">{{ record.record_date }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Follow-up Date</span>
+        <span class="detail-value">{{ record.follow_up_date|default:"None scheduled" }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vitals -->
+  <div class="card">
+    <div class="detail-section">
+      <h3><i class="fas fa-heartbeat"></i> Vitals &amp; Diagnosis</h3>
+      <div class="detail-row">
+        <span class="detail-label">Blood Pressure</span>
+        <span class="detail-value">{{ record.blood_pressure|default:"—" }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Temperature (°F)</span>
+        <span class="detail-value">{{ record.temperature_f|default:"—" }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Diagnosis</span>
+        <span class="detail-value">{{ record.diagnosis }}</span>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h3><i class="fas fa-stethoscope"></i> Symptoms</h3>
+      <p style="color:var(--text-secondary);font-size:0.9rem;line-height:1.7;">{{ record.symptoms }}</p>
+    </div>
+  </div>
+</div>
+
+<!-- Prescription & Lab Notes -->
+<div class="card mt-3">
+  <div class="detail-grid">
+    <div class="detail-section">
+      <h3><i class="fas fa-prescription"></i> Prescription</h3>
+      <p style="color:var(--text-secondary);font-size:0.9rem;line-height:1.7;">{{ record.prescription|default:"No prescription provided." }}</p>
+      {% if record.prescription_file %}
+      <a href="{{ record.prescription_file.url }}" target="_blank" class="btn btn-secondary btn-sm mt-2"><i class="fas fa-download"></i> Download Prescription</a>
+      {% endif %}
+    </div>
+    <div class="detail-section">
+      <h3><i class="fas fa-flask"></i> Lab Notes</h3>
+      <p style="color:var(--text-secondary);font-size:0.9rem;line-height:1.7;">{{ record.lab_notes|default:"No lab notes." }}</p>
+      {% if record.lab_report_file %}
+      <a href="{{ record.lab_report_file.url }}" target="_blank" class="btn btn-secondary btn-sm mt-2"><i class="fas fa-download"></i> Download Lab Report</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Dispensed Medicines -->
+{% if record.dispensed_medicines.all %}
+<div class="card mt-3">
+  <div class="card-header">
+    <h2><i class="fas fa-pills" style="color:var(--accent-secondary);margin-right:8px;"></i> Dispensed Medicines</h2>
+  </div>
+  <div class="card-body">
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Medicine</th><th>Batch</th><th>Qty</th><th>Date</th><th>Notes</th></tr></thead>
+        <tbody>
+          {% for d in record.dispensed_medicines.all %}
+          <tr>
+            <td>{{ d.stock_batch.medicine.name }}</td>
+            <td>{{ d.stock_batch.batch_number }}</td>
+            <td>{{ d.quantity }}</td>
+            <td>{{ d.date_dispensed }}</td>
+            <td>{{ d.notes|default:"—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

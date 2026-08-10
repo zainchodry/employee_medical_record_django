@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Employee Medical Record Management System — Manage health records, appointments, prescriptions, and pharmacy inventory.">
+  <title>{% block title %}MedVault{% endblock %} | Employee Medical Records</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- Sidebar Overlay (Mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon"><i class="fas fa-heartbeat"></i></div>
+        <div>
+          <h2>MedVault</h2>
+          <span>Medical Records</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Main</div>
+          <a href="{% url 'dashboard' %}" class="nav-link" id="nav-dashboard">
+            <span class="nav-icon"><i class="fas fa-th-large"></i></span> Dashboard
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Health</div>
+          <a href="{% url 'record_list' %}" class="nav-link" id="nav-records">
+            <span class="nav-icon"><i class="fas fa-file-medical"></i></span> Medical Records
+          </a>
+          <a href="{% url 'appointment_list' %}" class="nav-link" id="nav-appointments">
+            <span class="nav-icon"><i class="fas fa-calendar-check"></i></span> Appointments
+          </a>
+        </div>
+
+        {% if request.user.role == 'DOCTOR' or request.user.role == 'ADMIN' or request.user.role == 'HR' %}
+        <div class="nav-section">
+          <div class="nav-section-title">Pharmacy</div>
+          <a href="{% url 'inventory_list' %}" class="nav-link" id="nav-inventory">
+            <span class="nav-icon"><i class="fas fa-pills"></i></span> Inventory
+          </a>
+        </div>
+        {% endif %}
+
+        <div class="nav-section">
+          <div class="nav-section-title">Account</div>
+          <a href="{% url 'profile' %}" class="nav-link" id="nav-profile">
+            <span class="nav-icon"><i class="fas fa-user-circle"></i></span> My Profile
+          </a>
+          <a href="{% url 'alert_list' %}" class="nav-link" id="nav-alerts">
+            <span class="nav-icon"><i class="fas fa-bell"></i></span> Notifications
+          </a>
+          <a href="{% url 'password_change' %}" class="nav-link" id="nav-password">
+            <span class="nav-icon"><i class="fas fa-key"></i></span> Change Password
+          </a>
+          <a href="{% url 'logout' %}" class="nav-link" id="nav-logout">
+            <span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span> Logout
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        &copy; 2026 MedVault — All rights reserved.
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="menu-toggle" id="menu-toggle"><i class="fas fa-bars"></i></button>
+          <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+        </div>
+        <div class="topbar-right">
+          <a href="{% url 'alert_list' %}" class="notification-badge" title="Notifications">
+            <i class="fas fa-bell"></i>
+          </a>
+          <div class="topbar-user">
+            <div class="topbar-avatar">{{ request.user.first_name|default:"U"|first }}</div>
+            <div>
+              <div style="font-weight:600;">{{ request.user.get_full_name|default:request.user.email }}</div>
+              <div style="font-size:0.7rem;color:var(--text-muted);">{{ request.user.get_role_display }}</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <div class="content-area">
+        {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+          <li class="message {{ message.tags }}">
+            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+            {{ message }}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+
+  <script src="{% static 'js/main.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

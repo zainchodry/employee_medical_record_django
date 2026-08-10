@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Dispense Medicine{% endblock %}
+{% block page_title %}Dispense Medicine{% endblock %}
+
+{% block content %}
+<div class="card form-card">
+  <div class="card-header">
+    <h2><i class="fas fa-prescription-bottle-alt" style="color:var(--accent);margin-right:8px;"></i> Dispense Medicine</h2>
+  </div>
+  <div class="card-body">
+    <div style="background:var(--bg-glass);padding:16px;border-radius:var(--radius-sm);margin-bottom:24px;border:1px solid var(--border-color);">
+      <p style="font-size:0.85rem;color:var(--text-secondary);">
+        <strong style="color:var(--text-primary);">Patient:</strong> {{ record.employee.get_full_name|default:record.employee.email }} &nbsp;|&nbsp;
+        <strong style="color:var(--text-primary);">Diagnosis:</strong> {{ record.diagnosis }} &nbsp;|&nbsp;
+        <strong style="color:var(--text-primary);">Record #{{ record.pk }}</strong>
+      </p>
+    </div>
+
+    <form method="post" id="dispense-form">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<ul class="form-errors">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+      {% endfor %}
+
+      {% if form.non_field_errors %}
+      <ul class="form-errors">{% for e in form.non_field_errors %}<li>{{ e }}</li>{% endfor %}</ul>
+      {% endif %}
+
+      <div style="margin-top:24px;display:flex;gap:12px;">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-pills"></i> Dispense</button>
+        <a href="{% url 'record_detail' record.pk %}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

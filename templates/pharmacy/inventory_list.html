@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Pharmacy Inventory{% endblock %}
+{% block page_title %}Pharmacy Inventory{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1><i class="fas fa-pills" style="color:var(--accent);margin-right:8px;"></i> Inventory</h1>
+  <input type="text" id="table-search" class="form-control" placeholder="Search medicines..." style="max-width:280px;">
+</div>
+
+<div class="card">
+  <div class="card-body">
+    {% if batches %}
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Medicine</th>
+            <th>Generic Name</th>
+            <th>Batch #</th>
+            <th>Qty Available</th>
+            <th>Expiry Date</th>
+            <th>Supplier</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for batch in batches %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td style="font-weight:600;color:var(--text-primary);">{{ batch.medicine.name }}</td>
+            <td>{{ batch.medicine.generic_name|default:"—" }}</td>
+            <td><code style="color:var(--accent);">{{ batch.batch_number }}</code></td>
+            <td>
+              {% if batch.quantity < 10 %}
+                <span style="color:var(--accent-warn);font-weight:600;">{{ batch.quantity }} ⚠</span>
+              {% else %}
+                {{ batch.quantity }}
+              {% endif %}
+            </td>
+            <td>{{ batch.expiry_date }}</td>
+            <td>{{ batch.supplier|default:"—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon"><i class="fas fa-box-open"></i></div>
+      <p>No inventory items found.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

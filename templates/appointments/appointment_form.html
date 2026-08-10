@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}{% if form.instance.pk %}Edit Appointment{% else %}Request Appointment{% endif %}{% endblock %}
+{% block page_title %}{% if form.instance.pk %}Manage Appointment{% else %}Request Appointment{% endif %}{% endblock %}
+
+{% block content %}
+<div class="card form-card">
+  <div class="card-header">
+    <h2>
+      <i class="fas fa-calendar-plus" style="color:var(--accent-secondary);margin-right:8px;"></i>
+      {% if form.instance.pk %}Manage Appointment{% else %}Request New Appointment{% endif %}
+    </h2>
+  </div>
+  <div class="card-body">
+    <form method="post" id="appointment-form">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<ul class="form-errors">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+      {% endfor %}
+      <div style="margin-top:24px;display:flex;gap:12px;">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> {% if form.instance.pk %}Update{% else %}Submit Request{% endif %}</button>
+        <a href="{% url 'appointment_list' %}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

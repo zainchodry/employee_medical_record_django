@@ -26,13 +26,34 @@ class User(AbstractUser):
         return f"{self.email} ({self.get_role_display()})"
 
 class UserProfile(models.Model):
+    class Gender(models.TextChoices):
+        MALE = 'Male', _('Male')
+        FEMALE = 'Female', _('Female')
+        OTHER = 'Other', _('Other')
+
+    class MaritalStatus(models.TextChoices):
+        SINGLE = 'Single', _('Single')
+        MARRIED = 'Married', _('Married')
+        DIVORCED = 'Divorced', _('Divorced')
+        WIDOWED = 'Widowed', _('Widowed')
+
+    class BloodGroup(models.TextChoices):
+        A_POS = 'A+', _('A+')
+        A_NEG = 'A-', _('A-')
+        B_POS = 'B+', _('B+')
+        B_NEG = 'B-', _('B-')
+        AB_POS = 'AB+', _('AB+')
+        AB_NEG = 'AB-', _('AB-')
+        O_POS = 'O+', _('O+')
+        O_NEG = 'O-', _('O-')
+
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     
     # Basic Info
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
-    gender = models.CharField(max_length=10, blank=True, null=True)
-    marital_status = models.CharField(max_length=20, blank=True, null=True)
+    gender = models.CharField(max_length=10, choices=Gender.choices, blank=True, null=True)
+    marital_status = models.CharField(max_length=20, choices=MaritalStatus.choices, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     
     # Employee Info
@@ -40,7 +61,7 @@ class UserProfile(models.Model):
     designation = models.CharField(max_length=50, blank=True, null=True)
     
     # Medical & Emergency Info
-    blood_group = models.CharField(max_length=5, blank=True, null=True)
+    blood_group = models.CharField(max_length=5, choices=BloodGroup.choices, blank=True, null=True)
     emergency_contact_name = models.CharField(max_length=50, blank=True, null=True)
     emergency_contact_phone = models.CharField(max_length=15, blank=True, null=True)
 

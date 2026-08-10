@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width:900px;">
+  <div class="profile-header">
+    <div class="profile-avatar">{{ request.user.first_name|default:"U"|first }}</div>
+    <div class="profile-info">
+      <h2>{{ request.user.get_full_name|default:request.user.email }}</h2>
+      <p>{{ request.user.email }} &middot; <span class="badge badge-role">{{ request.user.get_role_display }}</span></p>
+    </div>
+    <a href="{% url 'profile_update' %}" class="btn btn-primary btn-sm" style="margin-left:auto;">
+      <i class="fas fa-edit"></i> Edit Profile
+    </a>
+  </div>
+
+  <div class="profile-grid">
+    <div class="card" style="padding:20px;">
+      <h3 style="font-size:0.95rem;color:var(--accent);margin-bottom:12px;"><i class="fas fa-user"></i> Personal Information</h3>
+      <div class="profile-field">
+        <div class="field-label">Phone Number</div>
+        <div class="field-value">{{ request.user.profile.phone_number|default:"Not set" }}</div>
+      </div>
+      <div class="profile-field">
+        <div class="field-label">Date of Birth</div>
+        <div class="field-value">{{ request.user.profile.date_of_birth|default:"Not set" }}</div>
+      </div>
+      <div class="profile-field">
+        <div class="field-label">Gender</div>
+        <div class="field-value">{{ request.user.profile.gender|default:"Not set" }}</div>
+      </div>
+      <div class="profile-field">
+        <div class="field-label">Marital Status</div>
+        <div class="field-value">{{ request.user.profile.marital_status|default:"Not set" }}</div>
+      </div>
+      <div class="profile-field">
+        <div class="field-label">Address</div>
+        <div class="field-value">{{ request.user.profile.address|default:"Not set" }}</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="padding:20px;margin-bottom:20px;">
+        <h3 style="font-size:0.95rem;color:var(--accent-secondary);margin-bottom:12px;"><i class="fas fa-building"></i> Employment Details</h3>
+        <div class="profile-field">
+          <div class="field-label">Department</div>
+          <div class="field-value">{{ request.user.profile.department|default:"Not set" }}</div>
+        </div>
+        <div class="profile-field">
+          <div class="field-label">Designation</div>
+          <div class="field-value">{{ request.user.profile.designation|default:"Not set" }}</div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:20px;">
+        <h3 style="font-size:0.95rem;color:var(--accent-warn);margin-bottom:12px;"><i class="fas fa-first-aid"></i> Medical &amp; Emergency</h3>
+        <div class="profile-field">
+          <div class="field-label">Blood Group</div>
+          <div class="field-value">{{ request.user.profile.blood_group|default:"Not set" }}</div>
+        </div>
+        <div class="profile-field">
+          <div class="field-label">Emergency Contact</div>
+          <div class="field-value">{{ request.user.profile.emergency_contact_name|default:"Not set" }}</div>
+        </div>
+        <div class="profile-field">
+          <div class="field-label">Emergency Phone</div>
+          <div class="field-value">{{ request.user.profile.emergency_contact_phone|default:"Not set" }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
